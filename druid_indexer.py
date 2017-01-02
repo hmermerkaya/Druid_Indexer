@@ -11,15 +11,7 @@ import getpass
 import os,glob,re
 
 
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+
 
 class ConfigFile: 
     
@@ -160,7 +152,7 @@ class ConfigFile:
                     json.dump(self._config_templ_json,outfile, sort_keys = True, indent = 4,ensure_ascii=False)
 
         return json_indexurl_dict
-#  
+  
     @classmethod
     def replace_nd(cls,adict, k, v, nd):
         if not hasattr(cls, "_flag"):
@@ -266,15 +258,7 @@ def submit_task(tobeSubmitted_list,running_dict, finished_list, max_task, check_
            
             if val==1:
                 _finished_list.append(key)
-        
-        """
-        for key in tmp_dict.iterkeys(): 
-            
-            os.remove('{0}/pid/druidindexer_{1}_{1}.pid'.format(ConfigFile.top_folder,tmp_dict[key].split('_')[1]))
-            del running_dict[key]
-            print 'task  associated with the datasource named "{0}" failed, because it is not found'.format(tmp_dict[key].split('_')[1])
-        """
-        
+    
         
         if len(_finished_list)!=0:
             for j in _finished_list:
@@ -431,11 +415,11 @@ if __name__ == "__main__":
                 exit()
             diction=json.loads(val)
             
-            #print '"{0}" submitted'.format(f)
-            time.sleep(args.WAIT_TIME_KAFKA_INDEX)
             task_id.append(diction["id"])
-            #print diction["id"]
-            #val=subprocess.Popen('{0} http://localhost:8090/druid/indexer/v1/supervisor/{1}/status'.format(curl_get,diction["id"]),shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE).communicate()[0]
+            time.sleep(args.WAIT_TIME_KAFKA_INDEX)
+           
+           
+           
            
                 
         time.sleep(20)
