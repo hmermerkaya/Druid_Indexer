@@ -1,0 +1,20 @@
+{
+            "dimensions": [
+                "LOCALSWITCHNAME",
+                "TERMINATIONCODE",
+                "RELEASEPARTY",
+                "CHARGINGCASE",
+                "INCOMING_TG",
+                "OUTGOING_TG",
+                "COUNTRY_CODE",
+                "DESTINATION_CODE",
+                "CAUSE_VALUE",
+                "TRUNK_TYPE",
+                "COUNTRY",
+                "DESTINATION",
+                "OUTGOING_TG_GRP",
+                "INCOMING_TG_GRP"
+            ],
+            "dimensionExclusions": [],
+            "spatialDimensions": []
+}

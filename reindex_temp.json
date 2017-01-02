@@ -1,0 +1,39 @@
+{
+  "type": "index",
+  "spec": {
+    "dataSchema": {
+      "dataSource": "new_igwcdr",
+      "parser": {
+        "type": "string",
+        "parseSpec": {
+          "format": "json",
+          "timestampSpec": {
+            "column": "timestamp",
+            "format": "auto"
+          },
+          "dimensionsSpec": {
+           }
+        }
+      },
+     "metricsSpec": "",
+        "granularitySpec":  {
+        "type": "uniform",
+        "segmentGranularity": "day",
+        "queryGranularity": "minute",
+        "intervals" : ["2016-12-01T00:00:00.000/2016-12-13T00:00:00.000"]
+      }
+    },
+    "ioConfig": {
+      "type": "index",
+      "firehose": {
+            "type"    : "ingestSegment",
+            "dataSource"   : "igwcdrv1",
+            "interval" : 
+            "2016-12-01T00:00:00.000/2016-12-13T00:00:00.000",
+            "filter": null,
+            "dimensions": null,
+            "metrics": null
+        }
+    }
+  }
+}

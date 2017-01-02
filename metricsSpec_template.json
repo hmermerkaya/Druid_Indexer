@@ -1,0 +1,26 @@
+[
+      {
+        "type": "count",
+        "name": "count"
+      },
+      {
+        "type": "doubleSum",
+        "name": "successdeliverycall",
+        "fieldName": "successdeliverycall"
+      },
+      {
+        "type": "doubleSum",
+        "name": "answeredcall",
+        "fieldName": "answeredcall"
+      },
+      {
+        "type": "doubleSum",
+        "name": "talktime",
+        "fieldName": "talktime"
+      },
+      {
+        "type": "doubleSum",
+        "name": "postdialdelay",
+        "fieldName": "postdialdelay"
+      }
+]
