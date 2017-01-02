@@ -24,8 +24,7 @@ class ConfigFile:
     
     @classmethod                                      
     def create_folders(cls):
-        
-       
+ 
         if not os.path.exists(cls.top_folder):
             os.makedirs(cls.top_folder)
         if not os.path.exists('{0}/log'.format(cls.top_folder)):
@@ -46,17 +45,12 @@ class ConfigFile:
             fn=open(csv_file,"r")
             reader=csv.reader(fn)
             for row in reader:
-            
                 self._row_list.append(row)
-                
-
         except IOError: 
             print "Error: File %s does not appear to exist. Please pass existing file to argument 'csv_file' in load_templates_files method "%csv_file
             return
-        
 
     def create_reindexing_json_files(self,config_templ_json='{0}/druidindexer/config/template/reindex_temp.json'.format(os.getenv("HOME"))):
-       
         try:
             fn=open(config_templ_json,"r")
             self._config_templ_json=json.load(fn)
@@ -66,6 +60,7 @@ class ConfigFile:
             return
         
         json_indexurl_dict={}
+        
         if not self._row_list:
             print 'csv config file not loaded, please load it with load_templates_files method'
             return
@@ -80,67 +75,48 @@ class ConfigFile:
                     try:
                         fn=open(field,"r") 
                         dim_template= json.load(fn)
-
                         ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],dim_template,1)
                     except IOError: 
                         print "Error: File %s does not appear to exist. Please pass existing file  to argument 'dim_template' in load_templates_files method  "%field
-                         
                 elif 'metricsSpec_template' in field:
                     try:
                         fn=open(field,"r") 
                         metric_template= json.load(fn)
-
                         ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],metric_template,1)
                     except IOError: 
                         print "Error: File %s does not appear to exist. Please pass existing file to argument 'metric_template' in load_templates_files method"%field
                         return
-
                 elif  self.Field_Names[item]=='interval' or self.Field_Names[item]=='intervals':
                     if field=='yesterday':
                         yesterday = date.today() - timedelta(1)
 
                         date_='{0}/{1}'.format(yesterday.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z',date.today().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z')
-
                         ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],date_,1)
                         if self.Field_Names[item]=='intervals':
                             ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],[date_],1)
-
                     elif  field=='lastweek': 
                         lastweek= date.today() - timedelta(7)
                         date_='{0}/{1}'.format(lastweek.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z',date.today().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z')
                         ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],date_,1)
                         if self.Field_Names[item]=='intervals':
-
                             ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],[date_],1)
-
                     elif  field=='lastmonth':
                             lastmonth= date.today() - timedelta(30)
                             date_='{0}/{1}'.format(lastmonth.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z',date.today().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z')
-
                             ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],date_,1)
                             if self.Field_Names[item]=='intervals':
-
                                 ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],[date_],1)
-
                     else:
                         print '<<< You entered "{0}" as interval in csv file.FieldName "Intervals" must be yesterday or lastweek or lastmonth >>>'.format(field)
                         print '{0}/druidindexer/tmp/{1}/config_reindex_{2}.json could not be created'.format(os.getenv("HOME"),date.today().strftime('%Y-%m-%d'),item_row)
                         break;
 
-
                 elif item==2:
-
                     ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],field,2)
-
-                    
                 else:
-
                     ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],field,1)
-
             else :
-                
                 filename = '{0}/druidindexer/tmp/{1}/config_reindex_{2}.json'.format(os.getenv("HOME"),date.today().strftime('%Y-%m-%d'),item_row)
-                
                 json_indexurl_dict[filename]=index_url
                 if not os.path.exists(os.path.dirname(filename)):
                     try:
@@ -182,8 +158,6 @@ class ConfigFile:
                     found_list.extend(cls.find_nd(v[k1], k))
 	return found_list
 
-     
-
 def submit_task(tobeSubmitted_list,running_dict, finished_list, max_task, check_period, json_indexurl_dict):
 
     if len(tobeSubmitted_list)==0:return
@@ -191,7 +165,6 @@ def submit_task(tobeSubmitted_list,running_dict, finished_list, max_task, check_
     shrinked_list=tobeSubmitted_list[:max_task-len(running_dict)]
     
     if len(shrinked_list)!=0: print 'To be submitted:', len(shrinked_list), shrinked_list
-
 
     for j in shrinked_list:
         
@@ -202,9 +175,7 @@ def submit_task(tobeSubmitted_list,running_dict, finished_list, max_task, check_
         if len(liste) > 0:
             print 'There are some running kafka indexing tasks. Make sure that all kafka tasks are shutdown before continuing with reindexing \nExited'
             return
-       
-       
-        
+      
         var=subprocess.Popen("curl --silent -X POST -H 'Content-Type: application/json' -d @{0} {1}".format(j,json_indexurl_dict[j]),shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE).communicate()[0].strip('\n')
         if var is '' : 
             print '"{0}" could not be submitted. Druid is not running, skipping.'.format(j)
@@ -222,11 +193,7 @@ def submit_task(tobeSubmitted_list,running_dict, finished_list, max_task, check_
             print 'The task producing datasource "{0}" is already being run by another instance of the script right now. Skipping it'.format(ConfigFile.find_nd(tmp,'dataSource')[0])
             tobeSubmitted_list.remove(j)
             continue
-        
-        
-        
-        
-        
+     
         if not os.path.exists(os.path.dirname(filename)):
             try:
                 os.makedirs(os.path.dirname(filename))
@@ -235,30 +202,24 @@ def submit_task(tobeSubmitted_list,running_dict, finished_list, max_task, check_
                     raise
         open(filename,'a').close()
         tobeSubmitted_list.remove(j)
-        
         running_dict[j]=list_[1]
         
     while True:
 
         time.sleep(check_period)
         _finished_list=[]
-
        
         tmp_dict=dict(running_dict)
+        
         for key,value in tmp_dict.iteritems():
-       
-            
             if int(subprocess.Popen('curl --silent -X GET  {0}{1}/status | grep -c FAILED'.format(json_indexurl_dict[key],tmp_dict[key]),shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE).communicate()[0].strip('\n')):
                 os.remove('{0}/pid/druidindexer_{1}_{1}.pid'.format(ConfigFile.top_folder,tmp_dict[key].split('_')[1]))
                 print 'task associated with the datasource named "{0}" failed, because it is not found'.format(tmp_dict[key].split('_')[1])
                 del running_dict[key]
                 #tmp_dict[key]=value
-            
             val=int(subprocess.Popen('curl --silent -X GET  {0}{1}/status | grep -c SUCCESS'.format(json_indexurl_dict[key],tmp_dict[key]),shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE).communicate()[0].strip('\n'))
-           
             if val==1:
                 _finished_list.append(key)
-    
         
         if len(_finished_list)!=0:
             for j in _finished_list:
@@ -268,12 +229,10 @@ def submit_task(tobeSubmitted_list,running_dict, finished_list, max_task, check_
                 os.remove('{0}/pid/druidindexer_{1}_{1}.pid'.format(ConfigFile.top_folder,liste[1]))
                 del running_dict[j]
                 
-                
         print '# of running task: ',len(running_dict)
         
         submit_task(tobeSubmitted_list,running_dict,finished_list,max_task,check_period,json_indexurl_dict)
         if len(running_dict)==0: break
-    
 
 if __name__ == "__main__":
 
@@ -286,7 +245,6 @@ if __name__ == "__main__":
     parser_a.add_argument('--input_csv_file',type=str, action='store', dest='CONFILE_PATH', required=True,help='config file path for reindexing (required)')
 
     parser_a.add_argument('--check_period', type=int, action='store', dest='CHECK_PERIOD',default=60,help= 'time interval in minutes for checking # of running task (default 60  min)')
-
 
     parser_a.add_argument('--config_item_list', nargs='+', action='store', type=int,dest='CONF_ITEM_LIST',help= 'item numbers of configFile')
     parser_a.add_argument('--max_task', type=int, action='store',dest='MAX_TASK_REINDEX',required=True,help= 'number of concurrent tasks (required)' )
@@ -327,14 +285,12 @@ if __name__ == "__main__":
 
     args=parser.parse_args()
 
-
     curl_get='curl --silent -X GET'
     curl_post='curl --silent  -X POST'
     curl_post_json="curl --silent -X POST -H 'Content-Type: application/json'"
 
     print args
     conf = ConfigFile()
-    
         
     if args.which is 'reindex':
         if not os.path.exists(ConfigFile.top_folder):
@@ -347,7 +303,6 @@ if __name__ == "__main__":
 
         #conf.setup()
         #exit()
-        
 
         list_files=glob.glob('{0}/tmp/{1}/*.json'.format(ConfigFile.top_folder,date.today().strftime('%Y-%m-%d')))
         list_files.sort(key=lambda var:[int(x) if x.isdigit() else x for x in re.findall(r'[^0-9]|[0-9]+', var)])
@@ -417,10 +372,6 @@ if __name__ == "__main__":
             
             task_id.append(diction["id"])
             time.sleep(args.WAIT_TIME_KAFKA_INDEX)
-           
-           
-           
-           
                 
         time.sleep(20)
         for i,f in enumerate( TobeSubmitted_list):
