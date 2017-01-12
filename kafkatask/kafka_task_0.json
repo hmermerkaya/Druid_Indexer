@@ -1,0 +1,114 @@
+{
+  "type": "kafka",
+  "dataSchema": {
+    "dataSource": "igwcdrv0",
+    "parser": {
+      "type": "string",
+      "parseSpec": {
+        "format": "csv",
+        "timestampSpec": {
+          "column": "ENDTIME","format":"yyyy-MM-dd HH:mm:ss"
+        },
+		"columns" :[
+"LOCALSWITCHNAME",
+"CSN",
+"STARTTIME",
+"ENDTIME",
+"A_NUMBER",
+"B_NUMBER",
+"TERMINATIONCODE",
+"RELEASEPARTY",
+"CHARGINGCASE",
+"CALLSETUPDURATION",
+"INCOMING_TG",
+"OUTGOING_TG",
+"CALLEDADDRESSNATURE",
+"CALLERCATEGORY",
+"COUNTRY_CODE",
+"DESTINATION_CODE",
+"TALK_TIME",
+"CAUSE_VALUE",
+"ANSWERED_CALL",
+"SUCCESS_DELIVERY_CALL",
+"TRUNK_TYPE",
+"COUNTRY",
+"DESTINATION",
+"OUTGOING_TG_GRP",
+"INCOMING_TG_GRP",
+"UTC_TIME"
+		],
+        "dimensionsSpec": {
+          "dimensions": [
+"LOCALSWITCHNAME",
+"STARTTIME",
+"ENDTIME",
+"A_NUMBER",
+"B_NUMBER",
+"TERMINATIONCODE",
+"RELEASEPARTY",
+"CHARGINGCASE",
+"INCOMING_TG",
+"OUTGOING_TG",
+"COUNTRY_CODE",
+"DESTINATION_CODE",
+"CAUSE_VALUE",
+"TRUNK_TYPE",
+"COUNTRY",
+"DESTINATION",
+"OUTGOING_TG_GRP",
+"INCOMING_TG_GRP"
+          ],
+          "dimensionExclusions": []
+        }
+      }
+    },
+    "granularitySpec": {
+      "type": "uniform",
+      "segmentGranularity": "day",
+      "queryGranularity": "NONE"
+    },
+    "shardSpec":{"type":"none"},
+    "metricsSpec": [
+      {
+        "type": "count",
+        "name": "count"
+      },
+      {
+        "type": "doubleSum",
+        "name": "successdeliverycall",
+        "fieldName": "SUCCESS_DELIVERY_CALL"
+      },
+      {
+        "type": "doubleSum",
+        "name": "answeredcall",
+        "fieldName": "ANSWERED_CALL"
+      },
+      {
+        "type": "doubleSum",
+        "name": "talktime",
+        "fieldName": "TALK_TIME"
+      },
+      {
+        "type": "doubleSum",
+        "name": "postdialdelay",
+        "fieldName": "CALLSETUPDURATION"
+      }
+    ]
+  },
+  "tuningConfig": {
+    "type": "kafka",
+    "maxRowsPerSegment": 2000000
+  },
+  "ioConfig": {
+    "topic": "igwcdrCSV",
+    "consumerProperties": {
+            "bootstrap.servers": "kafka1.myhostname.com:9092",
+	    "security.protocol": "SASL_PLAINTEXT",
+            "group.id": "test-consumer-group",
+	    "sasl.kerberos.service.name": "kafka"
+    },
+    "taskCount": 1,
+    "replicas": 1,
+    "taskDuration": "PT1H"
+  }
+}

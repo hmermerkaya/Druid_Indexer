@@ -1,0 +1,3 @@
+0,igwcdrv0,igwcdrv0,/home/kafka/druidindexer/config/template/dimensionsSpec_template.json,/home/kafka/druidindexer/config/template/metricsSpec_template.json,lastmonth,lastmonth,day,hour,http://localhost:8090/druid/indexer/v1/task/
+1,igwcdrv1,igwcdrv1,/home/kafka/druidindexer/config/template/dimensionsSpec_template.json,/home/kafka/druidindexer/config/template/metricsSpec_template.json,lastmonth,lastmonth,day,hour,http://localhost:8090/druid/indexer/v1/task/
+2,igwcdrv2,igwcdrv2,/home/kafka/druidindexer/config/template/dimensionsSpec_template.json,/home/kafka/druidindexer/config/template/metricsSpec_template.json,lastmonth,lastmonth,day,hour,http://localhost:8090/druid/indexer/v1/task/
