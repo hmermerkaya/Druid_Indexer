@@ -12,8 +12,6 @@ import logging
 import shutil
 
 
-
-
 class ConfigFile: 
     
     top_folder=os.getenv("PWD")
