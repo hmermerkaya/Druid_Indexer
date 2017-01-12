@@ -106,11 +106,11 @@ class ConfigFile:
                         if self.Field_Names[item]=='intervals':
                             ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],[date_],1)
                     elif  field=='lastmonth':
-                            lastmonth= date.today() - timedelta(60)
-                            date_='{0}/{1}'.format(lastmonth.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z',date.today().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z')
-                            ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],date_,1)
-                            if self.Field_Names[item]=='intervals':
-                                ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],[date_],1)
+                        lastmonth= date.today() - timedelta(60)
+                        date_='{0}/{1}'.format(lastmonth.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z',date.today().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z')
+                        ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],date_,1)
+                        if self.Field_Names[item]=='intervals':
+                            ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],[date_],1)
                     else:
                         logger.error('<<< You entered "{0}" as interval in csv file. FieldName "Intervals" must be yesterday or lastweek or lastmonth >>>'.format(field))
                         #print '<<< You entered "{0}" as interval in csv file.FieldName "Intervals" must be yesterday or lastweek or lastmonth >>>'.format(field)
