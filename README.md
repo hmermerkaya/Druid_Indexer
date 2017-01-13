@@ -73,4 +73,3 @@ sample usage:
 
 In the first run of the script with the action of reindex,  it creates  the subfolder structure given above  if not exist,  and then exits the script
 After exiting, make sure that you first put the "reindex_temp.json", "metricsSpec_template.json" and "dimensionsSpec_template.json" under config/template , then run the script again
-
