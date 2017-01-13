@@ -6,7 +6,8 @@ launch 	Launch kafka indexing tasks
 shutdown 	Shutdown kafka indexing tasks
 display_all 	Display all running kafka indexing tasks
 reindex 	Reindex datasources
-# ./druid_indexer.py -h  to see the help menu (lines above)
+
+./druid_indexer.py -h  to see the help menu (lines above)
 
 launch 
 
