@@ -2,6 +2,7 @@
 import argparse
 import json 
 from datetime import date, timedelta
+from dateutil.relativedelta import relativedelta
 import time
 import subprocess
 import csv
@@ -90,27 +91,38 @@ class ConfigFile:
                         #print "Error: File %s does not appear to exist. Please pass existing file to argument 'metric_template' in load_templates_files method"%field
                         return
                 elif  self.Field_Names[item]=='interval' or self.Field_Names[item]=='intervals':
-                    if field=='yesterday':
-                        yesterday = date.today() - timedelta(1)
-
-                        date_='{0}/{1}'.format(yesterday.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z',date.today().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z')
+                    matchedObj =re.match(r'^P(\d+Y|Y)?(\d+M|M)?(\d+W|W)?(\d+D|D)?-P(\d+Y|Y)?(\d+M|M)?(\d+W|W)?(\d+D|D)?$',field,re.M|re.I)
+                    if matchedObj:
+                        
+                        date1=matchedObj.groups()[:4]
+                        date2=matchedObj.groups()[4:]
+                       
+                        date1=[ y if y else None  for  y in date1 ]
+                        date2=[ y  if y else None  for  y in date2 ]
+                        
+                        DATE1= TODAY = date.today()
+                        DATE2= TODAY = date.today()
+                        
+                        for x in date1:
+                            if x is not None:
+                                if "Y" in x : DATE1=DATE1-relativedelta(years=+int(x.strip('Y')))
+                                elif "M" in x: DATE1=DATE1-relativedelta(months=+int(x.strip('M')))
+                                elif "W" in x: DATE1=DATE1-relativedelta(weeks=+int(x.strip('W')))
+                                elif "D" in x: DATE1=DATE1-relativedelta(days=+int(x.strip('D')))
+                        for x in date2:
+                             if x is not None:
+                                if "Y" in x : DATE2=DATE2-relativedelta(years=+int(x.strip('Y')))
+                                elif "M" in x: DATE2=DATE2-relativedelta(months=+int(x.strip('M')))
+                                elif "W" in x: DATE2=DATE2-relativedelta(weeks=+int(x.strip('W')))
+                                elif "D" in x: DATE2=DATE2-relativedelta(days=+int(x.strip('D')))
+                            
+                        date_='{0}/{1}'.format(DATE2.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z',DATE1.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z')
                         ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],date_,1)
                         if self.Field_Names[item]=='intervals':
                             ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],[date_],1)
-                    elif  field=='lastweek': 
-                        lastweek= date.today() - timedelta(7)
-                        date_='{0}/{1}'.format(lastweek.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z',date.today().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z')
-                        ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],date_,1)
-                        if self.Field_Names[item]=='intervals':
-                            ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],[date_],1)
-                    elif  field=='lastmonth':
-                        lastmonth= date.today() - timedelta(60)
-                        date_='{0}/{1}'.format(lastmonth.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z',date.today().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z')
-                        ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],date_,1)
-                        if self.Field_Names[item]=='intervals':
-                            ConfigFile.replace_nd(self._config_templ_json,self.Field_Names[item],[date_],1)
+                       
                     else:
-                        logger.error('<<< You entered "{0}" as interval in csv file. FieldName "Intervals" must be yesterday or lastweek or lastmonth >>>'.format(field))
+                        logger.error('<<<  FieldName "Intervals" or "interval"  must be  in the format of "P<year>Y<month>M<week><day>D-P<year>Y<month>M<week><day>D   as in  P2M3D-P1Y4W ( 2months 3 days ago - 1 year 4 weeks ago)   >>>'.format(field))
                         #print '<<< You entered "{0}" as interval in csv file.FieldName "Intervals" must be yesterday or lastweek or lastmonth >>>'.format(field)
                         logger.error('{0}/tmp/{1}/config_reindex_{2}.json could not be created'.format(ConfigFile.top_folder,date.today().strftime('%Y-%m-%d'),item_row))
                         #print '{0}/tmp/{1}/config_reindex_{2}.json could not be created'.format(top_folder,date.today().strftime('%Y-%m-%d'),item_row)
